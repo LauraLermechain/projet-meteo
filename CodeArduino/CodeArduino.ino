@@ -66,15 +66,11 @@ void loop() {
   Serial.print(1.8 * bme.readTemperature() + 32);
   Serial.println(" *F");*/
   
-  Serial.print("Pressure = ");
+  Serial.print("Pression = ");
   Serial.print(bme.readPressure() / 100.0F);
   Serial.println(" hPa");
 
-  Serial.print("Approx. Altitude = ");
-  Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
-  Serial.println(" m");
-
-  Serial.print("Humidity = ");
+  Serial.print("Humidite = ");
   Serial.print(bme.readHumidity());
   Serial.println(" %");
 
@@ -84,10 +80,23 @@ void loop() {
   display.setCursor(0, 10);
   display.setTextSize(1);
   display.setTextColor(WHITE);
-  display.print("Temperature = ");
+
+  display.println("METEO");
+  display.println();
+
+  display.print("Temp. = ");
   display.print(bme.readTemperature());
-  display.println(" *C");
+  display.println(" C");
+
+  display.print("Press. = ");
+  display.print(bme.readPressure() / 100.0F);
+  display.println(" hPa");
+
+  display.print("Hum. = ");
+  display.print(bme.readHumidity());
+  display.println(" %");
+
   display.display();
 
-  delay(1000);
+  delay(5000);
 }
