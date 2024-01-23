@@ -6,53 +6,50 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  Text,
 } from "@chakra-ui/react";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+
 export type ProbeProps = {
-  id: string;
-  name: string;
-  temperature: Number;
-  humidity: Number;
-  pression: Number;
-  date_time: Date;
+  id_sonde: string;
+  nom: string;
+  active: boolean;
 };
 
 export type ProbeTagsProps = {
-  data: Array<ProbeProps>;
+  probeData: Array<ProbeProps> | null;
   selectedProbe: string;
   setSelectedProbe: (probe: string) => void;
 };
 
 export const ProbeTags: React.FC<ProbeTagsProps> = ({
-  data,
+  probeData,
   selectedProbe,
   setSelectedProbe,
 }) => {
   return (
     <Stack direction="row" justifyContent="start" ml={3} my={3}>
-      {data?.map((probe, index) => (
+      {probeData?.map((probe, index) => (
         <Tag
           noOfLines={1}
           key={index}
-          bgColor={probe.name === selectedProbe ? "teal.600" : "white"}
-          textColor={probe.name === selectedProbe ? "white" : "teal.600"}
+          bgColor={probe.nom === selectedProbe ? "teal.600" : "white"}
+          textColor={probe.nom === selectedProbe ? "white" : "teal.600"}
           onClick={() => {
-            setSelectedProbe(probe.name);
+            setSelectedProbe(probe.nom);
           }}
           cursor="pointer"
           fontWeight="500"
           fontSize="x-large"
           lineHeight="lg"
           border={
-            probe.name !== selectedProbe ? "1px solid" : "1px solid transparent"
+            probe.nom !== selectedProbe ? "1px solid" : "1px solid transparent"
           }
-          borderColor={
-            probe.name !== selectedProbe ? "gray.300" : "transparent"
-          }
+          borderColor={probe.nom !== selectedProbe ? "gray.300" : "transparent"}
         >
-          {probe.name === "ALL_PROBE" ? "Toutes les sondes" : probe.name}
+          {probe.nom === "ALL_PROBE" ? "Toutes les sondes" : probe.nom}
         </Tag>
       ))}
     </Stack>
@@ -60,7 +57,7 @@ export const ProbeTags: React.FC<ProbeTagsProps> = ({
 };
 
 export const ProbeMenu: React.FC<ProbeTagsProps> = ({
-  data,
+  probeData,
   selectedProbe,
   setSelectedProbe,
 }) => {
@@ -73,13 +70,13 @@ export const ProbeMenu: React.FC<ProbeTagsProps> = ({
         variant="outline"
       />
       <MenuList>
-        {data?.map((probe, index) => (
+        {probeData?.map((probe, index) => (
           <MenuItem
             onClick={() => {
-              setSelectedProbe(probe.name);
+              setSelectedProbe(probe.nom);
             }}
           >
-            {probe.name === "ALL_PROBE" ? "Toutes les sondes" : probe.name}
+            {probe.nom === "ALL_PROBE" ? "Toutes les sondes" : probe.nom}
           </MenuItem>
         ))}
       </MenuList>

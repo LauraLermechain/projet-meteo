@@ -1,71 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Grid, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { ProbeMenu, ProbeTags } from "./ProbeTag.tsx";
 
 export default function ActionSection() {
   const [selectedProbe, setSelectedProbe] = useState<string>("ALL_PROBE");
   const isLargeScreen = useBreakpointValue({ base: false, md: true });
+  const [dataProbe, setDataProbe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/sondes");
+        console.log("response", response);
+        const result = await response.json();
+        console.log("result", result);
+        setDataProbe(result);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    console.log("dataprobe", { dataProbe });
+    fetchData();
+  }, [dataProbe]);
+
+  if (loading) {
+    return <p>Chargement en cours...</p>;
+  }
+
+  if (error) {
+    return <p>Une erreur s'est produite :</p>;
+  }
+
   return (
     <Grid templateColumns="repeat(2, 1fr)">
       {isLargeScreen ? (
         <ProbeTags
-          data={[
-            {
-              id: "0",
-              name: "ALL_PROBE",
-              temperature: 25.5,
-              humidity: 50,
-              pression: 1015,
-              date_time: new Date("2022-01-23T12:00:00Z"),
-            },
-            {
-              id: "1",
-              name: "Sonde 1",
-              temperature: 25.5,
-              humidity: 50,
-              pression: 1015,
-              date_time: new Date("2022-01-23T12:00:00Z"),
-            },
-            {
-              id: "2",
-              name: "Sonde 2",
-              temperature: 22.3,
-              humidity: 60,
-              pression: 1010,
-              date_time: new Date("2022-01-23T13:30:00Z"),
-            },
-          ]}
+          probeData={dataProbe}
           selectedProbe={selectedProbe}
           setSelectedProbe={setSelectedProbe}
         />
       ) : (
         <ProbeMenu
-          data={[
-            {
-              id: "0",
-              name: "ALL_PROBE",
-              temperature: 25.5,
-              humidity: 50,
-              pression: 1015,
-              date_time: new Date("2022-01-23T12:00:00Z"),
-            },
-            {
-              id: "1",
-              name: "Sonde 1",
-              temperature: 25.5,
-              humidity: 50,
-              pression: 1015,
-              date_time: new Date("2022-01-23T12:00:00Z"),
-            },
-            {
-              id: "2",
-              name: "Sonde 2",
-              temperature: 22.3,
-              humidity: 60,
-              pression: 1010,
-              date_time: new Date("2022-01-23T13:30:00Z"),
-            },
-          ]}
+          probeData={dataProbe}
           selectedProbe={selectedProbe}
           setSelectedProbe={setSelectedProbe}
         />
