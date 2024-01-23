@@ -55,6 +55,26 @@ def recuperer_releves():
 # -------- Méthode pour C(reate)R(ead)U(pdate) API sur la table sonde -------#
 #  la DB doit permettre l'ajout/suppresion et l'activation/désactivation de sonde
 
+@app.route('/api/sondes/', methods=['GET'])
+def recuperer_info_sondes():
+    conn = sqlite3.connect("baseDeDonnee.db")
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM Sonde')  
+    sondes = cursor.fetchall()
+    conn.close()
+
+    liste_sondes = []
+
+    for sonde in sondes:
+        dico = {'id_sonde' : sonde[0],
+                'nom': sonde[1],
+                'active': sonde[2]
+                }
+        
+        liste_sondes.append(dico)
+
+    return flask.jsonify(liste_sondes)
+
 
 @app.route('/api/ajouter-sonde', methods=['POST'])
 def ajouter_sonde():
