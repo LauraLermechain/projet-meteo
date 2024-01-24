@@ -6,7 +6,7 @@ connection = sqlite3.connect('baseDeDonnee.db')
 cursor = connection.cursor()
 cursor.execute('''CREATE TABLE IF NOT EXISTS Sonde (
                id_sonde INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-               nom VARCHAR(50) UNIQUE NOT NULL,
+               nom VARCHAR(50) NOT NULL,
                active INT DEFAULT 1 CHECK (active IN (0, 1))
                 )''')
 connection.commit()
