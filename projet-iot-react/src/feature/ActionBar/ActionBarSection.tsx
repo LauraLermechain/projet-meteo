@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid, Flex, useBreakpointValue } from "@chakra-ui/react";
+import { Grid, Flex, useBreakpointValue } from "@chakra-ui/react";
 import { ProbeMenu, ProbeTags } from "./ProbeTag.tsx";
+import { AddProbeModal, DeleteProbeModal } from "./Modals.tsx";
 
 export default function ActionSection() {
   const [selectedProbe, setSelectedProbe] = useState<string>("ALL_PROBE");
@@ -33,7 +34,7 @@ export default function ActionSection() {
   }
 
   return (
-    <Grid templateColumns="repeat(2, 1fr)">
+    <Grid templateColumns="repeat(2, 1fr)" mt={5}>
       {isLargeScreen ? (
         <ProbeTags
           probeData={dataProbe}
@@ -48,12 +49,8 @@ export default function ActionSection() {
         />
       )}
       <Flex justify={{ base: "center ", md: "flex-end" }} align="center" px={5}>
-        <Button color="white" bg="teal.600" mx={2} rounded="lg" maxW={300}>
-          {isLargeScreen ? "Ajouter une sonde" : "+"}
-        </Button>
-        <Button color="white" bg="teal.600" rounded="lg" maxW={300}>
-          {isLargeScreen ? "Supprimer une sonde" : "-"}
-        </Button>
+        <AddProbeModal />
+        <DeleteProbeModal dataProbe={dataProbe} />
       </Flex>
     </Grid>
   );

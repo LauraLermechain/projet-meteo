@@ -5,12 +5,10 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  IconButton,
-  Text,
+  Button,
 } from "@chakra-ui/react";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 export type ProbeProps = {
   id_sonde: string;
@@ -63,15 +61,13 @@ export const ProbeMenu: React.FC<ProbeTagsProps> = ({
 }) => {
   return (
     <Menu>
-      <MenuButton
-        as={IconButton}
-        aria-label="Options"
-        icon={<FontAwesomeIcon icon={faBars} />}
-        variant="outline"
-      />
+      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+        {selectedProbe === "ALL_PROBE" ? "Toutes les sondes" : selectedProbe}
+      </MenuButton>
       <MenuList>
         {probeData?.map((probe, index) => (
           <MenuItem
+            key={index}
             onClick={() => {
               setSelectedProbe(probe.nom);
             }}
