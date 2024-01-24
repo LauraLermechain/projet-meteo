@@ -9,6 +9,11 @@
 #include <ArduinoJson.h>
 
 #include <ESP8266WiFi.h> //pour l'ESP2866
+#include <ESP8266HTTPClient.h>
+
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -21,15 +26,17 @@
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 Adafruit_BME280 bme; // I2C
 //Adafruit_BME280 bme(BME_CS); // hardware SPI
 //Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
+const char* SSID = "POCOF3";
+const char* password = "A08082003a";
 
 int counter = 0;
 
@@ -47,14 +54,16 @@ float averageHumidity = 0;
 
 JsonDocument jsonData;
 
+WiFiClient client;
+
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   Wire.pins(0,2);
   Wire.begin();
 
   // on demande la connexion au WiFi
-  WiFi.begin("POCOF3", "A08082003a");
+  WiFi.begin(SSID, password);
   Serial.println("Tentative de connection");
 
   // on attend d'etre connecte au WiFi avant de continuer
@@ -63,6 +72,8 @@ void setup() {
     Serial.print(".");
   }
   Serial.println("Connected to WiFi");
+
+  timeClient.begin();
 
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
@@ -85,6 +96,12 @@ void setup() {
 }
 
 void loop() { 
+
+  timeClient.update();
+
+  String formattedTime = timeClient.getFormattedTime();
+  Serial.println("Heure actuelle : " + formattedTime);
+
 
   temperature = bme.readTemperature();
   pressure = bme.readPressure() / 100.0F;
@@ -165,6 +182,16 @@ void loop() {
     serializeJsonPretty(jsonData, Serial);
 
     Serial.println();
+
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      HTTPClient http;
+      http.begin(client, "http://192.168.41.230:5000/api/releves");
+      http.addHeader("Content-Type", "application/json");
+      String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": " + String(formattedTime) + ", \"id_sonde\": \"1\" }";
+      int httpCode = http.POST(jsonPayload);
+      Serial.println(httpCode);
+    }
 
     counter = 0;
     totalTemperature = 0;
