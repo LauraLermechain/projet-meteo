@@ -8,6 +8,17 @@
 
 #include <ArduinoJson.h>
 
+#include <ESP8266WiFi.h> //pour l'ESP2866
+#include <ESP8266HTTPClient.h> //pour envoyer des données
+//#include <WiFiUdp.h> // Pour programmation des routines UDP. Pas utile ? 
+
+
+//WiFiUDP ntpUDP;
+
+const char *ssid = "POCO F3";
+const char *password = "A08082003a";
+
+
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
@@ -50,6 +61,18 @@ void setup() {
 
   Wire.pins(0,2);
   Wire.begin();
+
+  // on demande la connexion au WiFi
+  WiFi.begin(ssid, password);
+  Serial.println("Tentative de connection");
+
+  // on attend d'etre connecte au WiFi avant de continuer
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected to WiFi");
+
 
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
