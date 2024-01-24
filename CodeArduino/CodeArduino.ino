@@ -11,6 +11,10 @@
 #include <ESP8266WiFi.h> //pour l'ESP2866
 #include <ESP8266HTTPClient.h>
 
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
+
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
@@ -29,6 +33,8 @@ Adafruit_BME280 bme; // I2C
 //Adafruit_BME280 bme(BME_CS); // hardware SPI
 //Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
 
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
 const char* SSID = "POCOF3";
 const char* password = "A08082003a";
 
@@ -67,6 +73,8 @@ void setup() {
   }
   Serial.println("Connected to WiFi");
 
+  timeClient.begin();
+
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
@@ -88,6 +96,12 @@ void setup() {
 }
 
 void loop() { 
+
+  timeClient.update();
+
+  String formattedTime = timeClient.getFormattedTime();
+  Serial.println("Heure actuelle : " + formattedTime);
+
 
   temperature = bme.readTemperature();
   pressure = bme.readPressure() / 100.0F;
@@ -174,7 +188,7 @@ void loop() {
       HTTPClient http;
       http.begin(client, "http://192.168.41.230:5000/api/releves");
       http.addHeader("Content-Type", "application/json");
-      String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": \"2012-04-23T18:25:43.511Z\", \"id_sonde\": \"1\" }";
+      String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": " + String(formattedTime) + ", \"id_sonde\": \"1\" }";
       int httpCode = http.POST(jsonPayload);
       Serial.println(httpCode);
     }
