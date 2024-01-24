@@ -9,6 +9,7 @@
 #include <ArduinoJson.h>
 
 #include <ESP8266WiFi.h> //pour l'ESP2866
+#include <ESP8266HTTPClient.h>
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -21,15 +22,15 @@
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 Adafruit_BME280 bme; // I2C
 //Adafruit_BME280 bme(BME_CS); // hardware SPI
 //Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
+
+const char* SSID = "POCOF3";
+const char* password = "A08082003a";
 
 int counter = 0;
 
@@ -47,14 +48,16 @@ float averageHumidity = 0;
 
 JsonDocument jsonData;
 
+WiFiClient client;
+
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   Wire.pins(0,2);
   Wire.begin();
 
   // on demande la connexion au WiFi
-  WiFi.begin("POCOF3", "A08082003a");
+  WiFi.begin(SSID, password);
   Serial.println("Tentative de connection");
 
   // on attend d'etre connecte au WiFi avant de continuer
@@ -165,6 +168,16 @@ void loop() {
     serializeJsonPretty(jsonData, Serial);
 
     Serial.println();
+
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      HTTPClient http;
+      http.begin(client, "http://192.168.41.230:5000/api/releves");
+      http.addHeader("Content-Type", "application/json");
+      String jsonPayload = "{\"humidite\": \"39.64570236\", \"temperature\": \"24.67599869\", \"pression\": \"1023.801758\", \"date_time\": \"2012-04-23T18:25:43.511Z\", \"id_sonde\": \"1\" }";
+      int httpCode = http.POST(jsonPayload);
+      Serial.println(httpCode);
+    }
 
     counter = 0;
     totalTemperature = 0;
