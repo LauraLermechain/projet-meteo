@@ -174,7 +174,7 @@ void loop() {
       HTTPClient http;
       http.begin(client, "http://192.168.41.230:5000/api/releves");
       http.addHeader("Content-Type", "application/json");
-      String jsonPayload = "{\"humidite\": \"39.64570236\", \"temperature\": \"24.67599869\", \"pression\": \"1023.801758\", \"date_time\": \"2012-04-23T18:25:43.511Z\", \"id_sonde\": \"1\" }";
+      String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": \"2012-04-23T18:25:43.511Z\", \"id_sonde\": \"1\" }";
       int httpCode = http.POST(jsonPayload);
       Serial.println(httpCode);
     }
