@@ -27,6 +27,11 @@ Adafruit_BME280 bme; // I2C
 //Adafruit_BME280 bme(BME_CS); // hardware SPI
 //Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
 
+int counter = 0;
+
+float temperature = 0;
+float totalTemperature = 0;
+float averageTemperature = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -57,9 +62,11 @@ void setup() {
 
 void loop() { 
 
+  temperature = bme.readTemperature();
+
   Serial.print("Temperature = ");
-  Serial.print(bme.readTemperature());
-  Serial.println(" *C");
+  Serial.print(temperature);
+  Serial.println(" C");
   
   // Convert temperature to Fahrenheit
   /*Serial.print("Temperature = ");
@@ -74,8 +81,6 @@ void loop() {
   Serial.print(bme.readHumidity());
   Serial.println(" %");
 
-  Serial.println();
-
   display.clearDisplay();
   display.setCursor(0, 10);
   display.setTextSize(1);
@@ -85,7 +90,7 @@ void loop() {
   display.println();
 
   display.print("Temp. = ");
-  display.print(bme.readTemperature());
+  display.print(temperature);
   display.println(" C");
 
   display.print("Press. = ");
@@ -97,6 +102,25 @@ void loop() {
   display.println(" %");
 
   display.display();
+
+  counter++;
+
+  Serial.println(counter);
+  Serial.println();
+
+  totalTemperature = totalTemperature + temperature;
+
+  if (counter == 5) {
+    
+    averageTemperature = totalTemperature / 5;
+
+    Serial.print("Moyenne temperature = ");
+    Serial.print(averageTemperature);
+    Serial.println(" C");
+
+    counter = 0;
+    totalTemperature = 0;
+  }
 
   delay(5000);
 }
