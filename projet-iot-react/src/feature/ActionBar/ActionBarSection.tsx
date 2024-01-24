@@ -13,7 +13,7 @@ export default function ActionSection() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/api/sondes");
+        const response = await fetch("http://192.168.41.230:5000/api/sondes");
         const result = await response.json();
         setDataProbe(result);
       } catch (error) {

@@ -134,3 +134,6 @@ def desactiver_sonde():
     return flask.jsonify({
          "message": "Sonde désactivée"
       })
+    
+if __name__ == '__main__':
+    app.run(host='192.168.41.230', port=5000, debug=True)

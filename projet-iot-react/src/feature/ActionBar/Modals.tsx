@@ -41,13 +41,16 @@ export const AddProbeModal = () => {
 
     try {
       // Effectuer la requête POST avec fetch
-      const response = await fetch("http://127.0.0.1:5000/api/ajouter-sonde", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "http://192.168.41.230:5000/api/ajouter-sonde",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       // Vérifier si la requête a réussi (status 2xx)
       if (response.ok) {
@@ -136,7 +139,7 @@ export const DeleteProbeModal = ({ dataProbe }) => {
     try {
       // Effectuer la requête POST avec fetch
       const response = await fetch(
-        "http://127.0.0.1:5000/api/supprimer-sonde",
+        "http://192.168.41.230:5000/api/supprimer-sonde",
         {
           method: "POST",
           headers: {
