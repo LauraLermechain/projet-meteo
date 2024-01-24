@@ -37,6 +37,10 @@ float pressure = 0;
 float totalPressure = 0;
 float averagePressure = 0;
 
+float humidity = 0;
+float totalHumidity = 0;
+float averageHumidity = 0;
+
 void setup() {
   Serial.begin(9600);
 
@@ -63,11 +67,11 @@ void setup() {
   Serial.println();
 }
 
-
 void loop() { 
 
   temperature = bme.readTemperature();
   pressure = bme.readPressure() / 100.0F;
+  humidity = bme.readHumidity();
 
   Serial.print("Temperature = ");
   Serial.print(temperature);
@@ -83,7 +87,7 @@ void loop() {
   Serial.println(" hPa");
 
   Serial.print("Humidite = ");
-  Serial.print(bme.readHumidity());
+  Serial.print(humidity);
   Serial.println(" %");
 
   display.clearDisplay();
@@ -103,7 +107,7 @@ void loop() {
   display.println(" hPa");
 
   display.print("Hum. = ");
-  display.print(bme.readHumidity());
+  display.print(humidity);
   display.println(" %");
 
   display.display();
@@ -115,11 +119,13 @@ void loop() {
 
   totalTemperature = totalTemperature + temperature;
   totalPressure = totalPressure + pressure;
+  totalHumidity = totalHumidity + humidity;
 
   if (counter == 5) {
 
     averageTemperature = totalTemperature / 5;
     averagePressure = totalPressure / 5;
+    averageHumidity = totalHumidity / 5;
 
     Serial.print("Moyenne temperature = ");
     Serial.print(averageTemperature);
@@ -129,11 +135,16 @@ void loop() {
     Serial.print(averagePressure);
     Serial.println(" hPa");
 
+    Serial.print("Moyenne humidite = ");
+    Serial.print(averageHumidity);
+    Serial.println(" %");
+
     Serial.println();
 
     counter = 0;
     totalTemperature = 0;
     totalPressure = 0;
+    totalHumidity = 0;
   }
 
   delay(5000);
