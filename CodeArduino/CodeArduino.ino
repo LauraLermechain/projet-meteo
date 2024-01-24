@@ -6,6 +6,8 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+#include <ArduinoJson.h>
+
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
@@ -40,6 +42,8 @@ float averagePressure = 0;
 float humidity = 0;
 float totalHumidity = 0;
 float averageHumidity = 0;
+
+JsonDocument jsonData;
 
 void setup() {
   Serial.begin(9600);
@@ -138,6 +142,14 @@ void loop() {
     Serial.print("Moyenne humidite = ");
     Serial.print(averageHumidity);
     Serial.println(" %");
+
+    Serial.println();
+
+    jsonData["temperature"] = averageTemperature;
+    jsonData["pression"] = averagePressure;
+    jsonData["humidite"] = averageHumidity;
+
+    serializeJsonPretty(jsonData, Serial);
 
     Serial.println();
 
