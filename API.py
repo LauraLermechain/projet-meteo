@@ -1,8 +1,8 @@
 import flask
 import sqlite3
-
+from flask_cors import CORS
 app = flask.Flask(__name__, template_folder='views')
-
+CORS(app)
 
 # -------- Méthode pour C(reate)R(ead) API sur la table des relevés -------- #
 
