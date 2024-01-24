@@ -12,10 +12,15 @@ def ajouter_releve():
     temperature = flask.request.json['temperature']
     pression = flask.request.json['pression']
     date_time = flask.request.json['date_time']
-    id_sonde = flask.request.json['id_sonde']
+    nom_sonde = flask.request.json['nom_sonde']
 
     conn = sqlite3.connect("baseDeDonnee.db")
     cursor = conn.cursor()
+
+    cursor.execute('SELECT id_sonde FROM Sonde WHERE nom = ?', (nom_sonde,))
+    id_sonde = cursor.fetchone() 
+    id_sonde = id_sonde[0]
+
     cursor.execute('INSERT INTO Releve (humidite_releve, temperature_releve, pression_releve, date_time_releve, id_sonde) VALUES (?,?,?,?,?)', (humidite,temperature,pression,date_time, id_sonde))
     conn.commit()
     conn.close()
@@ -26,11 +31,11 @@ def ajouter_releve():
 
 
 
-@app.route('/api/releves/', methods=['GET'])   # ici on peut utiliser le /api/releves/<..id_sonde...> pour récupérer l'id_sonde et selectionner uniquement les releves qui viennent d'une sonde en particulier
+@app.route('/api/releves/', methods=['GET'])  
 def recuperer_releves():
     conn = sqlite3.connect("baseDeDonnee.db")
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Releve')   #WHERE id_sonde = ?
+    cursor.execute('SELECT * FROM Releve')   
     releves = cursor.fetchall()
     conn.close()
 
@@ -48,6 +53,31 @@ def recuperer_releves():
 
 
     return flask.jsonify(liste_releves)
+
+
+@app.route('/api/releves/<int:id_sonde>', methods=['GET'])   # ici on peut utiliser le /api/releves/<..id_sonde...> pour récupérer l'id_sonde et selectionner uniquement les releves qui viennent d'une sonde en particulier
+def recuperer_releves_sonde_unique(id_sonde):
+    conn = sqlite3.connect("baseDeDonnee.db")
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM Releve WHERE id_sonde = ?', (id_sonde,))   # WHERE id_sonde = ?
+    releves = cursor.fetchall()
+    conn.close()
+
+    liste_releves = []
+
+    for releve in releves:
+        dico = {'id' : releve[0],
+                'humidite': releve[1],
+                'temperature': releve[2],
+                'pression': releve[3],
+                'date_time': releve[4],
+                'id_sonde' : releve[5]
+                }
+        liste_releves.append(dico)
+
+
+    return flask.jsonify(liste_releves)
+
 
 
 
@@ -136,4 +166,4 @@ def desactiver_sonde():
       })
     
 if __name__ == '__main__':
-    app.run(host='192.168.41.230', port=5000, debug=True)
+    app.run(host='192.168.41.230', port=5000, debug=True)  # adresse ip du serveur sur le port 5000
