@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Flex, useBreakpointValue, GridItem } from "@chakra-ui/react";
+import {
+  Grid,
+  Flex,
+  useBreakpointValue,
+  GridItem,
+  Box,
+} from "@chakra-ui/react";
 import { ProbeMenu, ProbeProps, ProbeTags } from "./ProbeTag.tsx";
 import { AddProbeModal, DeleteProbeModal } from "./Modals.tsx";
 import { API_BASE_URL } from "../config.js";
 import { WeatherGraph } from "./Graphs.tsx";
 import { ParamsMenu, ParamsTags } from "./ParamsTag.tsx";
+import { CardsSection } from "./CardsSection.tsx";
 
 export default function ActionSection() {
   const [selectedProbe, setSelectedProbe] = useState<ProbeProps>({
@@ -42,12 +49,8 @@ export default function ActionSection() {
   }
 
   return (
-    <>
-      <Grid
-        templateRows="repeat(2, 1fr)"
-        templateColumns="repeat(2, 1fr)"
-        mt={5}
-      >
+    <Box px={isLargeScreen ? 10 : 0}>
+      <Grid templateColumns="repeat(2, 1fr)" my={5}>
         <GridItem>
           {isLargeScreen ? (
             <ProbeTags
@@ -75,18 +78,24 @@ export default function ActionSection() {
           )}
         </GridItem>
         <Flex
-          justify={{ base: "center ", md: "flex-end" }}
-          align="center"
-          px={5}
+          justify="flex-end"
+          align="flex-end"
+          flexDirection={isLargeScreen ? "row" : "column"}
         >
           <AddProbeModal />
           <DeleteProbeModal dataProbe={dataProbe} />
         </Flex>
       </Grid>
-      <WeatherGraph
-        selectedProbe={selectedProbe}
-        selectedParam={selectedParam}
-      />
-    </>
+      <Flex
+        justify="space-between"
+        flexDirection={isLargeScreen ? "row" : "column"}
+      >
+        <WeatherGraph
+          selectedProbe={selectedProbe}
+          selectedParam={selectedParam}
+        />
+        <CardsSection probeData={dataProbe} selectedProbe={selectedProbe} />
+      </Flex>
+    </Box>
   );
 }

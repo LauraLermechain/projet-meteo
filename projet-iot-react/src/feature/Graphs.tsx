@@ -12,8 +12,6 @@ import { API_BASE_URL } from "../config.js";
 
 export const WeatherGraph = ({ selectedProbe, selectedParam }) => {
   const [apiData, setApiData] = useState([]);
-  console.log(selectedProbe);
-  console.log("selectedprobe", selectedProbe.id_sonde);
   useEffect(() => {
     // Remplacez 'YOUR_API_ENDPOINT' par l'URL réel de votre API
     fetch(
@@ -30,7 +28,7 @@ export const WeatherGraph = ({ selectedProbe, selectedParam }) => {
   }, [selectedProbe]); // Le tableau vide assure que le code s'exécute une seule fois après le montage du composant
 
   return (
-    <LineChart width={400} height={400} data={apiData}>
+    <LineChart width={300} height={300} data={apiData}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="date_time" />
       <YAxis />

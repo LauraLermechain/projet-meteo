@@ -79,7 +79,7 @@ export const AddProbeModal = () => {
         onClick={onOpen}
         fontSize={isLargeScreen ? "x-large" : "md"}
       >
-        {isLargeScreen ? "Ajouter une sonde" : "ajouter"}
+        {isLargeScreen ? "Ajouter une sonde" : "Ajouter"}
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -172,11 +172,13 @@ export const DeleteProbeModal = ({ dataProbe }) => {
         color="white"
         bg="teal.600"
         rounded="lg"
+        mt={isLargeScreen ? 0 : 2}
+        mx={2}
         maxW={300}
         onClick={onOpen}
         fontSize={isLargeScreen ? "x-large" : "md"}
       >
-        {isLargeScreen ? "Supprimer une sonde" : "supprimer"}
+        {isLargeScreen ? "Supprimer une sonde" : "Supprimer"}
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
