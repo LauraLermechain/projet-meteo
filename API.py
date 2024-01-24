@@ -6,7 +6,7 @@ CORS(app)
 
 # -------- Méthode pour C(reate)R(ead) API sur la table des relevés -------- #
 
-@app.route('/api/releves', methods=['POST'])
+@app.route('/api/releves', methods=['POST'])    # C'est sur cette route que l'esp2 va se connecter pour enregistrer chaque relevé dans la BD
 def ajouter_releve():
     humidite = flask.request.json['humidite']
     temperature = flask.request.json['temperature']
@@ -26,8 +26,7 @@ def ajouter_releve():
 
 
 
-
-@app.route('/api/releves/', methods=['GET'])
+@app.route('/api/releves/', methods=['GET'])   # ici on peut utiliser le /api/releves/<..id_sonde...> pour récupérer l'id_sonde et selectionner uniquement les releves qui viennent d'une sonde en particulier
 def recuperer_releves():
     conn = sqlite3.connect("baseDeDonnee.db")
     cursor = conn.cursor()
