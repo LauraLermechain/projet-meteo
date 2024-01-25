@@ -51,7 +51,9 @@ export const CardsSection = ({ selectedProbe }) => {
           <Heading size={isLargeScreen ? "lg" : "sm"}>Température</Heading>
         </CardHeader>
         <CardBody>
-          <Text>{lastApiData ? lastApiData?.temperature : "-"}</Text>
+          <Text color="teal">
+            {lastApiData ? lastApiData?.temperature : "-"}
+          </Text>
         </CardBody>
       </Card>
       <Card
@@ -63,7 +65,7 @@ export const CardsSection = ({ selectedProbe }) => {
           <Heading size={isLargeScreen ? "lg" : "sm"}> Pression</Heading>
         </CardHeader>
         <CardBody>
-          <Text>{lastApiData ? lastApiData?.pression : "-"}</Text>
+          <Text color="teal">{lastApiData ? lastApiData?.pression : "-"}</Text>
         </CardBody>
       </Card>
       <Card
@@ -75,7 +77,7 @@ export const CardsSection = ({ selectedProbe }) => {
           <Heading size={isLargeScreen ? "lg" : "sm"}> Humidité</Heading>
         </CardHeader>
         <CardBody>
-          <Text>{lastApiData ? lastApiData?.humidite : "-"}</Text>
+          <Text color="teal">{lastApiData ? lastApiData?.humidite : "-"}</Text>
         </CardBody>
       </Card>
     </SimpleGrid>

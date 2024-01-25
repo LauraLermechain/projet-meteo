@@ -31,10 +31,8 @@ export const OnlineWeatherSection = ({ selectedProbe }) => {
   const lastApiData = apiData.length > 0 ? apiData[apiData.length - 1] : null;
 
   function calculMeteo(temperature, humidite) {
-    let iconData = "";
-
-    if (temperature > 25 && humidite < 60) {
-      <FontAwesomeIcon icon={faSun} />;
+    if (temperature > 23 && humidite < 60) {
+      return <FontAwesomeIcon icon={faSun} />;
     } else if (temperature > 5 && humidite > 80) {
       return <FontAwesomeIcon icon={faCloudRain} />;
     } else if (temperature < 5 && humidite > 80) {
@@ -42,7 +40,6 @@ export const OnlineWeatherSection = ({ selectedProbe }) => {
     } else {
       return <FontAwesomeIcon icon={faCloud} />;
     }
-    return iconData;
   }
 
   return (

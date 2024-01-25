@@ -29,14 +29,24 @@ export const WeatherGraph = ({ selectedProbe, selectedParam }) => {
     }, 10000);
     return () => clearInterval(intervalId);
   }, [selectedProbe]);
+  const dataSlice = apiData.slice(-100);
   return (
-    <LineChart width={900} height={500} data={apiData}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="date_time" />
+    <LineChart
+      width={1200}
+      height={500}
+      data={selectedProbe.nom === "ALL_PROBE" ? apiData : dataSlice}
+    >
+      <XAxis dataKey="none" />
       <YAxis />
       <Tooltip />
       <Legend />
-      <Line type="monotone" dataKey={selectedParam} stroke="teal" />
+      <Line
+        type="monotone"
+        dataKey={selectedParam}
+        stroke="teal"
+        dot={selectedProbe.nom !== "ALL_PROBE"}
+        strokeWidth={2}
+      />
     </LineChart>
   );
 };
