@@ -34,7 +34,7 @@ export const ProbeTags: React.FC<ProbeTagsProps> = ({
         bgColor={selectedProbe.id_sonde === 0 ? "teal.600" : "white"}
         textColor={selectedProbe.id_sonde === 0 ? "white" : "teal.600"}
         onClick={() => {
-          setSelectedProbe({ id_sonde: 0, nom: "ALL_PROBE", active: false });
+          setSelectedProbe({ id_sonde: 0, nom: "ALL_PROBE", active: true });
         }}
         cursor="pointer"
         fontWeight="500"
