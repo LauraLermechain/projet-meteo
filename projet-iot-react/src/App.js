@@ -7,7 +7,6 @@ function App() {
   <>
       <Heading width="100%" bg="teal.400" py={4} display="flex" justifyContent="center">Station météo</Heading>
       <ActionSection />
-
   </>
 
   );

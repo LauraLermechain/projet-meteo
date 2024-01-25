@@ -9,32 +9,33 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL } from "../config";
-interface WeatherData {
+export interface WeatherData {
   date_time: Date;
   humidite: number;
   pression: number;
   temperature: number;
 }
-export const CardsSection = ({ probeData, selectedProbe }) => {
+export const CardsSection = ({ selectedProbe }) => {
   const [apiData, setApiData] = useState<WeatherData[]>([]);
   const isLargeScreen = useBreakpointValue({ base: false, lg: true });
 
-  const fetchData = async () => {
-    const response = await fetch(
-      selectedProbe.nom === "ALL_PROBE"
-        ? `${API_BASE_URL}/releves`
-        : `${API_BASE_URL}/releves/${selectedProbe.id_sonde}`
-    );
-    const result = await response.json();
-    setApiData(result);
-  };
   useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        selectedProbe.nom === "ALL_PROBE"
+          ? `${API_BASE_URL}/releves`
+          : `${API_BASE_URL}/releves/${selectedProbe.id_sonde}`
+      );
+      const result = await response.json();
+      setApiData(result);
+    };
     fetchData();
+    console.log(selectedProbe.id_sonde);
     const intervalId = setInterval(() => {
       fetchData();
     }, 1000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [selectedProbe]);
   const lastApiData = apiData.length > 0 ? apiData[apiData.length - 1] : null;
   return (
     <SimpleGrid
@@ -50,7 +51,7 @@ export const CardsSection = ({ probeData, selectedProbe }) => {
           <Heading size={isLargeScreen ? "lg" : "sm"}>Température</Heading>
         </CardHeader>
         <CardBody>
-          <Text>{lastApiData?.temperature}</Text>
+          <Text>{lastApiData ? lastApiData?.temperature : "-"}</Text>
         </CardBody>
       </Card>
       <Card
@@ -62,7 +63,7 @@ export const CardsSection = ({ probeData, selectedProbe }) => {
           <Heading size={isLargeScreen ? "lg" : "sm"}> Pression</Heading>
         </CardHeader>
         <CardBody>
-          <Text>{lastApiData?.pression}</Text>
+          <Text>{lastApiData ? lastApiData?.pression : "-"}</Text>
         </CardBody>
       </Card>
       <Card
@@ -74,7 +75,7 @@ export const CardsSection = ({ probeData, selectedProbe }) => {
           <Heading size={isLargeScreen ? "lg" : "sm"}> Humidité</Heading>
         </CardHeader>
         <CardBody>
-          <Text>{lastApiData?.humidite}</Text>
+          <Text>{lastApiData ? lastApiData?.humidite : "-"}</Text>
         </CardBody>
       </Card>
     </SimpleGrid>

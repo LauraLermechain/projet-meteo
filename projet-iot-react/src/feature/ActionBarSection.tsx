@@ -12,6 +12,7 @@ import { API_BASE_URL } from "../config.js";
 import { WeatherGraph } from "./Graphs.tsx";
 import { ParamsMenu, ParamsTags } from "./ParamsTag.tsx";
 import { CardsSection } from "./CardsSection.tsx";
+import { OnlineWeatherSection } from "./OnlineWeatherSection.tsx";
 
 export default function ActionSection() {
   const [selectedProbe, setSelectedProbe] = useState<ProbeProps>({
@@ -74,11 +75,14 @@ export default function ActionSection() {
         justify="space-between"
         flexDirection={isLargeScreen ? "row" : "column"}
       >
-        <WeatherGraph
-          selectedProbe={selectedProbe}
-          selectedParam={selectedParam}
-        />
-        <CardsSection probeData={dataProbe} selectedProbe={selectedProbe} />
+        <Flex flexDirection="column">
+          <OnlineWeatherSection selectedProbe={selectedProbe} />
+          <WeatherGraph
+            selectedProbe={selectedProbe}
+            selectedParam={selectedParam}
+          />
+        </Flex>
+        {isLargeScreen ? <CardsSection selectedProbe={selectedProbe} /> : null}
       </Flex>
     </Box>
   );
