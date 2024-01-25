@@ -40,6 +40,13 @@ float CalculateAverage (float value) {
     return value / READINGS_NUMBER_FOR_AVERAGE;
 }
 
+void ConfigureDisplay() {
+
+  display.setCursor(0, 10);
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+}
+
 test(CalculateAverage) {
   int average = CalculateAverage(10);
   assertEqual(average, 2);
@@ -68,6 +75,8 @@ void setup() {
     for(;;);
   }
   delay(2000);
+
+  ConfigureDisplay();
 
   bool status;
 
@@ -108,9 +117,6 @@ void loop() {
   Serial.println(" %");
 
   display.clearDisplay();
-  display.setCursor(0, 10);
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
 
   display.println("METEO");
   display.println();
