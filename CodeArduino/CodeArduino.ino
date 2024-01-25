@@ -116,9 +116,9 @@ void loop() {
 
   if (counter == 5) {
 
-    averageTemperature = totalTemperature / 5;
-    averagePressure = totalPressure / 5;
-    averageHumidity = totalHumidity / 5;
+    averageTemperature = CalculateAverage(totalTemperature);
+    averagePressure = CalculateAverage(totalPressure);
+    averageHumidity = CalculateAverage(totalHumidity);
 
     Serial.print("Moyenne temperature = ");
     Serial.print(averageTemperature);
@@ -159,4 +159,9 @@ void loop() {
   }
 
   delay(5000);
+}
+
+float CalculateAverage (float value) {
+
+    return value / 5;
 }
