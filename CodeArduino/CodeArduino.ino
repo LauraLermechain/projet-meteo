@@ -148,7 +148,7 @@ void loop() {
     if (WiFi.status() == WL_CONNECTED)
     {
       HTTPClient http;
-      http.begin(client, "http://192.168.41.230:5000/api/releves");
+      http.begin(client, "http://192.168.98.230:5000/api/releves");
       http.addHeader("Content-Type", "application/json");
       String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": " + formattedTime + ", \"id_sonde\": " + String(PROBE_ID) + " }";
       int httpCode = http.POST(jsonPayload);
