@@ -12,23 +12,25 @@ import { API_BASE_URL } from "../config.js";
 
 export const WeatherGraph = ({ selectedProbe, selectedParam }) => {
   const [apiData, setApiData] = useState([]);
-  useEffect(() => {
-    // Remplacez 'YOUR_API_ENDPOINT' par l'URL réel de votre API
-    fetch(
+
+  const fetchData = async () => {
+    const response = await fetch(
       selectedProbe.nom === "ALL_PROBE"
         ? `${API_BASE_URL}/releves`
         : `${API_BASE_URL}/releves/${selectedProbe.id_sonde}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        // Assurez-vous que la structure des données de l'API correspond à ce que votre graphique attend
-        setApiData(data);
-      })
-      .catch((error) => console.error("Error fetching API data:", error));
-  }, [selectedProbe]); // Le tableau vide assure que le code s'exécute une seule fois après le montage du composant
-
+    );
+    const result = await response.json();
+    setApiData(result);
+  };
+  useEffect(() => {
+    fetchData();
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 10000);
+    return () => clearInterval(intervalId);
+  }, []);
   return (
-    <LineChart width={300} height={300} data={apiData}>
+    <LineChart width={900} height={500} data={apiData}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="date_time" />
       <YAxis />

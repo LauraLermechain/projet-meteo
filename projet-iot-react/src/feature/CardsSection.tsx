@@ -10,55 +10,68 @@ import {
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL } from "../config";
 interface WeatherData {
-  date_time: string;
+  date_time: Date;
   humidite: number;
   pression: number;
-  temperature: number; // Ajoutez la propriété temperature
-  // Ajoutez d'autres propriétés si nécessaire
+  temperature: number;
 }
 export const CardsSection = ({ probeData, selectedProbe }) => {
   const [apiData, setApiData] = useState<WeatherData[]>([]);
-  const isLargeScreen = useBreakpointValue({ base: false, md: true });
+  const isLargeScreen = useBreakpointValue({ base: false, lg: true });
 
-  useEffect(() => {
-    // Remplacez 'YOUR_API_ENDPOINT' par l'URL réel de votre API
-    fetch(
+  const fetchData = async () => {
+    const response = await fetch(
       selectedProbe.nom === "ALL_PROBE"
         ? `${API_BASE_URL}/releves`
         : `${API_BASE_URL}/releves/${selectedProbe.id_sonde}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        // Assurez-vous que la structure des données de l'API correspond à ce que votre graphique attend
-        setApiData(data);
-      })
-      .catch((error) => console.error("Error fetching API data:", error));
-  }, [selectedProbe, apiData]);
+    );
+    const result = await response.json();
+    setApiData(result);
+  };
+  useEffect(() => {
+    fetchData();
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
   const lastApiData = apiData.length > 0 ? apiData[apiData.length - 1] : null;
   return (
     <SimpleGrid
       spacing={4}
       templateColumns={isLargeScreen ? "1fr " : "1fr 1fr 1fr"}
     >
-      <Card>
+      <Card
+        w={isLargeScreen ? 80 : 52}
+        h={isLargeScreen ? 44 : 24}
+        alignItems="center"
+      >
         <CardHeader>
-          <Heading size={isLargeScreen ? "md" : "sm"}> Température</Heading>
+          <Heading size={isLargeScreen ? "lg" : "sm"}>Température</Heading>
         </CardHeader>
         <CardBody>
           <Text>{lastApiData?.temperature}</Text>
         </CardBody>
       </Card>
-      <Card>
+      <Card
+        w={isLargeScreen ? 80 : 52}
+        h={isLargeScreen ? 44 : 24}
+        alignItems="center"
+      >
         <CardHeader>
-          <Heading size={isLargeScreen ? "md" : "sm"}> Pression</Heading>
+          <Heading size={isLargeScreen ? "lg" : "sm"}> Pression</Heading>
         </CardHeader>
         <CardBody>
           <Text>{lastApiData?.pression}</Text>
         </CardBody>
       </Card>
-      <Card>
+      <Card
+        w={isLargeScreen ? 80 : 52}
+        h={isLargeScreen ? 44 : 24}
+        alignItems="center"
+      >
         <CardHeader>
-          <Heading size={isLargeScreen ? "md" : "sm"}> Humidité</Heading>
+          <Heading size={isLargeScreen ? "lg" : "sm"}> Humidité</Heading>
         </CardHeader>
         <CardBody>
           <Text>{lastApiData?.humidite}</Text>
