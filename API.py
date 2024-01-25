@@ -1,12 +1,19 @@
 import flask
 import sqlite3
 from flask_cors import CORS
+
 app = flask.Flask(__name__, template_folder='views')
+
 CORS(app)
+
+
+# -------- Authentification des utilisateurs ------- #
+
+@app.route('/api/releve')
 
 # -------- Méthode pour C(reate)R(ead) API sur la table des relevés -------- #
 
-@app.route('/api/releves', methods=['POST'])    # C'est sur cette route que l'esp2 va se connecter pour enregistrer chaque relevé dans la BD
+@app.route('/api/releves', methods=['POST'])    # C'est sur cette route que l'esp2 va se connecter pour enregistrer chaque relevé dans la BD.
 def ajouter_releve():
     humidite = flask.request.json['humidite']
     temperature = flask.request.json['temperature']
@@ -26,8 +33,7 @@ def ajouter_releve():
       })
 
 
-
-@app.route('/api/releves/', methods=['GET'])  
+@app.route('/api/releves/', methods=['GET'])  # C'est sur cette route que le front se connecte pour récupérer les relevés de toutes les sondes.
 def recuperer_releves():
     conn = sqlite3.connect("baseDeDonnee.db")
     cursor = conn.cursor()
@@ -51,11 +57,11 @@ def recuperer_releves():
     return flask.jsonify(liste_releves)
 
 
-@app.route('/api/releves/<int:id_sonde>', methods=['GET'])   # ici on peut utiliser le /api/releves/<..id_sonde...> pour récupérer l'id_sonde et selectionner uniquement les releves qui viennent d'une sonde en particulier
+@app.route('/api/releves/<int:id_sonde>', methods=['GET'])   # C'est sur cette route que le front se connecte pour récupérer les relevés d'une sonde en particulier => le fronte doit spécifier l'id de la sonde voulue (<id_sonde>)
 def recuperer_releves_sonde_unique(id_sonde):
     conn = sqlite3.connect("baseDeDonnee.db")
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM Releve WHERE id_sonde = ?', (id_sonde,))   # WHERE id_sonde = ?
+    cursor.execute('SELECT * FROM Releve WHERE id_sonde = ?', (id_sonde,)) 
     releves = cursor.fetchall()
     conn.close()
 
@@ -80,7 +86,7 @@ def recuperer_releves_sonde_unique(id_sonde):
 # -------- Méthode pour C(reate)R(ead)U(pdate) API sur la table sonde -------#
 #  la DB doit permettre l'ajout/suppresion et l'activation/désactivation de sonde
 
-@app.route('/api/sondes/', methods=['GET'])
+@app.route('/api/sondes/', methods=['GET'])  # c'est sur cette route que le front se connecte pour récupérer toutes les sondes stockées dans la base de données .
 def recuperer_info_sondes():
     conn = sqlite3.connect("baseDeDonnee.db")
     cursor = conn.cursor()
@@ -101,7 +107,7 @@ def recuperer_info_sondes():
     return flask.jsonify(liste_sondes)
 
 
-@app.route('/api/ajouter-sonde', methods=['POST'])
+@app.route('/api/ajouter-sonde', methods=['POST']) # C'est sur cette route que le front se connecte pour ajouter une sonde dans la BD.
 def ajouter_sonde():
     nom = flask.request.json['nom']
     
@@ -115,7 +121,8 @@ def ajouter_sonde():
          "message": "Sonde bien ajoutée"
       })
 
-@app.route('/api/supprimer-sonde', methods=['POST'])
+
+@app.route('/api/supprimer-sonde', methods=['POST'])  # C'est sur cette route que le front se connecte pour supprimer une sonde dans la BD.
 def supprimer_sonde():
 
     id_sonde = flask.request.json['id_sonde']
@@ -131,7 +138,7 @@ def supprimer_sonde():
       })
 
 
-@app.route('/api/activer-sonde', methods=['POST'])
+@app.route('/api/activer-sonde', methods=['POST'])  # C'est sur cette route que le front se conencte pour activer une sonde dans la BD.
 def activer_sonde():
 
     id_sonde = flask.request.json['id_sonde']
@@ -146,7 +153,8 @@ def activer_sonde():
          "message": "Sonde bien activée"
       })
 
-@app.route('/api/desactiver-sonde', methods=['POST'])
+
+@app.route('/api/desactiver-sonde', methods=['POST'])   # C'est sur cette route que le front se connecte pour désactiver une sonde dans la BD.
 def desactiver_sonde():
 
     id_sonde = flask.request.json['id_sonde']
@@ -161,5 +169,9 @@ def desactiver_sonde():
          "message": "Sonde désactivée"
       })
     
+
+
+
+
 if __name__ == '__main__':
     app.run(host='192.168.41.230', port=5000, debug=True)  # adresse ip du serveur sur le port 5000
