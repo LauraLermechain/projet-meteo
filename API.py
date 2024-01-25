@@ -196,4 +196,4 @@ def desactiver_sonde():
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.41.230', port=5000, debug=True)  # adresse ip du serveur sur le port 5000
+    app.run(host='192.168.98.230', port=5000, debug=True)  # adresse ip du serveur sur le port 5000
