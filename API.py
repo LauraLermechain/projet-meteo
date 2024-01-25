@@ -6,10 +6,32 @@ app = flask.Flask(__name__, template_folder='views')
 
 CORS(app)
 
-
+'''
 # -------- Authentification des utilisateurs ------- #
 
-@app.route('/api/releve')
+@app.route('/api/register', methods=['POST'])
+def enregistrer_utilisateur():
+
+    nom = flask.request.json['nom']
+    mot_de_passe = flask.request.json['mdp']
+
+    conn = sqlite3.connect("baseDeDonnee.db")
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT COUNT(*) FROM utilisateur WHERE nom_utilisateur = ?', (nom.strip(),))
+    utilisateur_existe_deja = cursor.fetchone()[0] > 0
+
+    if utilisateur_existe_deja:
+        pass
+    
+    cursor.execute('INSERT INTO utilisateur (nom_utilisateur, mot_de_passe_utilisateur) VALUES (?,?)', (nom, mot_de_passe))
+    conn.commit()
+    conn.close()
+
+    return flask.jsonify({
+         "message": "Utilisateur bien enregistré"
+      })
+'''
 
 # -------- Méthode pour C(reate)R(ead) API sur la table des relevés -------- #
 
