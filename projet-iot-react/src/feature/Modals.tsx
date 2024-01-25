@@ -14,13 +14,18 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { API_BASE_URL } from "../config";
 
 export const AddProbeModal = () => {
   const isLargeScreen = useBreakpointValue({ base: false, md: true });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleCloseAndReload = () => {
     onClose();
-    window.location.reload();
+
+    // Ajouter un délai d'une seconde (1000 millisecondes) avant de recharger la page
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
   // Définir l'état pour stocker les données du formulaire
@@ -41,16 +46,13 @@ export const AddProbeModal = () => {
 
     try {
       // Effectuer la requête POST avec fetch
-      const response = await fetch(
-        "http://192.168.41.230:5000/api/ajouter-sonde",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/ajouter-sonde`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       // Vérifier si la requête a réussi (status 2xx)
       if (response.ok) {
@@ -77,7 +79,7 @@ export const AddProbeModal = () => {
         onClick={onOpen}
         fontSize={isLargeScreen ? "x-large" : "md"}
       >
-        {isLargeScreen ? "Ajouter une sonde" : "ajouter"}
+        {isLargeScreen ? "Ajouter une sonde" : "Ajouter"}
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -116,7 +118,11 @@ export const DeleteProbeModal = ({ dataProbe }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleCloseAndReload = () => {
     onClose();
-    window.location.reload();
+
+    // Ajouter un délai d'une seconde (1000 millisecondes) avant de recharger la page
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
   const [formData, setFormData] = useState({
@@ -138,16 +144,13 @@ export const DeleteProbeModal = ({ dataProbe }) => {
 
     try {
       // Effectuer la requête POST avec fetch
-      const response = await fetch(
-        "http://192.168.41.230:5000/api/supprimer-sonde",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/supprimer-sonde`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       // Vérifier si la requête a réussi (status 2xx)
       if (response.ok) {
@@ -169,11 +172,13 @@ export const DeleteProbeModal = ({ dataProbe }) => {
         color="white"
         bg="teal.600"
         rounded="lg"
+        mt={isLargeScreen ? 0 : 2}
+        mx={2}
         maxW={300}
         onClick={onOpen}
         fontSize={isLargeScreen ? "x-large" : "md"}
       >
-        {isLargeScreen ? "Supprimer une sonde" : "supprimer"}
+        {isLargeScreen ? "Supprimer une sonde" : "Supprimer"}
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
