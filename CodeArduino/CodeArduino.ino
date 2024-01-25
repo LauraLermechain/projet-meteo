@@ -1,14 +1,16 @@
 #include <Adafruit_BME280.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 #include <Wire.h>
 
-#define SCREEN_WIDTH 128
+#define PROBE_ID 1
+#define READINGS_NUMBER_FOR_AVERAGE 5
 #define SCREEN_HEIGHT 64
+#define SCREEN_WIDTH 128
 #define SEALEVELPRESSURE_HPA (1013.25)
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
@@ -16,6 +18,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Adafruit_BME280 bme;
 JsonDocument jsonData;
 WiFiClient client;
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 3600);
 
 const char* SSID = "POCOF3";
 const char* password = "A08082003a";
@@ -45,6 +49,8 @@ void setup() {
   }
   Serial.println("Connected to WiFi");
 
+  timeClient.begin();
+
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
 
     Serial.println(F("SSD1306 allocation failed"));
@@ -66,6 +72,11 @@ void setup() {
 }
 
 void loop() { 
+
+  timeClient.update();
+
+  String formattedTime = timeClient.getFormattedTime();
+  Serial.println("Heure actuelle : " + formattedTime);
 
   temperature = bme.readTemperature();
   pressure = bme.readPressure() / 100.0F;
@@ -114,7 +125,7 @@ void loop() {
   totalPressure = totalPressure + pressure;
   totalHumidity = totalHumidity + humidity;
 
-  if (counter == 5) {
+  if (counter == READINGS_NUMBER_FOR_AVERAGE) {
 
     averageTemperature = CalculateAverage(totalTemperature);
     averagePressure = CalculateAverage(totalPressure);
@@ -134,22 +145,15 @@ void loop() {
 
     Serial.println();
 
-    jsonData["temperature"] = averageTemperature;
-    jsonData["pression"] = averagePressure;
-    jsonData["humidite"] = averageHumidity;
-
-    serializeJsonPretty(jsonData, Serial);
-
-    Serial.println();
-
     if (WiFi.status() == WL_CONNECTED)
     {
       HTTPClient http;
       http.begin(client, "http://192.168.41.230:5000/api/releves");
       http.addHeader("Content-Type", "application/json");
-      String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": \"2012-04-23T18:25:43.511Z\", \"id_sonde\": \"1\" }";
+      String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": " + formattedTime + ", \"id_sonde\": " + String(PROBE_ID) + " }";
       int httpCode = http.POST(jsonPayload);
       Serial.println(httpCode);
+      Serial.println(jsonPayload);
     }
 
     counter = 0;
@@ -163,5 +167,5 @@ void loop() {
 
 float CalculateAverage (float value) {
 
-    return value / 5;
+    return value / READINGS_NUMBER_FOR_AVERAGE;
 }
