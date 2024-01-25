@@ -42,6 +42,7 @@ float CalculateAverage (float value) {
 
 void ConfigureDisplay() {
 
+  display.clearDisplay();
   display.setCursor(0, 10);
   display.setTextSize(1);
   display.setTextColor(WHITE);
@@ -75,8 +76,6 @@ void setup() {
     for(;;);
   }
   delay(2000);
-
-  ConfigureDisplay();
 
   bool status;
 
@@ -116,7 +115,7 @@ void loop() {
   Serial.print(humidity);
   Serial.println(" %");
 
-  display.clearDisplay();
+  ConfigureDisplay();
 
   display.println("METEO");
   display.println();
