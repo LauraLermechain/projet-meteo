@@ -1,60 +1,34 @@
-/* Include libraries of BME280 sensor */
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
-
+#include <Adafruit_Sensor.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-
 #include <ArduinoJson.h>
-
-#include <ESP8266WiFi.h> //pour l'ESP2866
+#include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <Wire.h>
 
-#include <NTPClient.h>
-#include <WiFiUdp.h>
-
-
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-/*#include <SPI.h>  // uncomment his if you are using SPI interface
-#define BME_SCK 18
-#define BME_MISO 19
-#define BME_MOSI 23
-#define BME_CS 5*/
-
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-Adafruit_BME280 bme; // I2C
-//Adafruit_BME280 bme(BME_CS); // hardware SPI
-//Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
+Adafruit_BME280 bme;
+JsonDocument jsonData;
+WiFiClient client;
 
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org");
 const char* SSID = "POCOF3";
 const char* password = "A08082003a";
-
 int counter = 0;
-
 float temperature = 0;
 float totalTemperature = 0;
 float averageTemperature = 0;
-
 float pressure = 0;
 float totalPressure = 0;
 float averagePressure = 0;
-
 float humidity = 0;
 float totalHumidity = 0;
 float averageHumidity = 0;
-
-JsonDocument jsonData;
-
-WiFiClient client;
 
 void setup() {
   Serial.begin(115200);
@@ -62,20 +36,17 @@ void setup() {
   Wire.pins(0,2);
   Wire.begin();
 
-  // on demande la connexion au WiFi
   WiFi.begin(SSID, password);
   Serial.println("Tentative de connection");
 
-  // on attend d'etre connecte au WiFi avant de continuer
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.println("Connected to WiFi");
 
-  timeClient.begin();
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
 
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
@@ -83,10 +54,9 @@ void setup() {
 
   bool status;
 
-  // default settings
-  // (you can also pass in a Wire library object like &Wire2)
   status = bme.begin(0x76);  
   if (!status) {
+
     Serial.println("Could not detect a BME280 sensor, Fix wiring Connections!");
     while (1);
   }
@@ -97,12 +67,6 @@ void setup() {
 
 void loop() { 
 
-  timeClient.update();
-
-  String formattedTime = timeClient.getFormattedTime();
-  Serial.println("Heure actuelle : " + formattedTime);
-
-
   temperature = bme.readTemperature();
   pressure = bme.readPressure() / 100.0F;
   humidity = bme.readHumidity();
@@ -110,12 +74,7 @@ void loop() {
   Serial.print("Temperature = ");
   Serial.print(temperature);
   Serial.println(" C");
-  
-  // Convert temperature to Fahrenheit
-  /*Serial.print("Temperature = ");
-  Serial.print(1.8 * bme.readTemperature() + 32);
-  Serial.println(" *F");*/
-  
+ 
   Serial.print("Pression = ");
   Serial.print(pressure);
   Serial.println(" hPa");
@@ -188,7 +147,7 @@ void loop() {
       HTTPClient http;
       http.begin(client, "http://192.168.41.230:5000/api/releves");
       http.addHeader("Content-Type", "application/json");
-      String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": " + String(formattedTime) + ", \"id_sonde\": \"1\" }";
+      String jsonPayload = "{\"humidite\": " + String(averageHumidity) + ", \"temperature\": " + String(averageTemperature) + ", \"pression\": " + String(averagePressure) + ", \"date_time\": \"2012-04-23T18:25:43.511Z\", \"id_sonde\": \"1\" }";
       int httpCode = http.POST(jsonPayload);
       Serial.println(httpCode);
     }
