@@ -16,7 +16,7 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS Releve (
                humidite_releve FLOAT NOT NULL,
                temperature_releve FLOAT NOT NULL,
                pression_releve FLOAT NOT NULL,
-               date_time_releve DATETIME NOT NULL,
+               date_time_releve TIME NOT NULL,
                id_sonde INTEGER,
                FOREIGN KEY (id_sonde) REFERENCES Sonde(id_sonde) ON DELETE CASCADE)''')
 connection.commit()
