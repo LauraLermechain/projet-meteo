@@ -1,6 +1,7 @@
 #include <Adafruit_BME280.h>
 #include <Adafruit_SSD1306.h>
 #include <ArduinoJson.h>
+#include <AUnit.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <NTPClient.h>
@@ -33,6 +34,16 @@ float averagePressure = 0;
 float humidity = 0;
 float totalHumidity = 0;
 float averageHumidity = 0;
+
+float CalculateAverage (float value) {
+
+    return value / READINGS_NUMBER_FOR_AVERAGE;
+}
+
+test(CalculateAverage) {
+  int average = CalculateAverage(10);
+  assertEqual(average, 2);
+}
 
 void setup() {
   Serial.begin(115200);
@@ -72,6 +83,8 @@ void setup() {
 }
 
 void loop() { 
+
+  aunit::TestRunner::run();
 
   timeClient.update();
 
@@ -163,9 +176,4 @@ void loop() {
   }
 
   delay(5000);
-}
-
-float CalculateAverage (float value) {
-
-    return value / READINGS_NUMBER_FOR_AVERAGE;
 }
