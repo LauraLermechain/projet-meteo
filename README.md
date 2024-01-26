@@ -2,11 +2,11 @@
 
 
 ## Description du Projet:
-Ce projet vise à créer une station météo capable de mesurer la température, l'humidité et la pression atmosphérique à l'aide de la sonde WPSE335. Les données collectées par l'ESP8266 sont envoyées à un serveur Flask via une API en langage C. L'API backend, développée en Python, stocke ces données et permet de créer une interface web conviviale en React pour visualiser les informations météorologiques.
+Ce projet vise à créer une station météo capable de mesurer la température, l'humidité et la pression atmosphérique à l'aide de la sonde WPSE335. Les données collectées par l'ESP8266 sont envoyées à un serveur Flask via une API en langage C++. L'API backend, développée en Python, stocke ces données et permet de créer une interface web conviviale en React pour visualiser les informations météorologiques.
 
 ## Composants du Projet:
-### ESP8266 avec Firmware en C:
-Le microcontrôleur ESP8266 est programmé en langage C pour lire les données de la sonde WPSE335 et les envoyer au serveur Flask.
+### ESP8266 avec Firmware en C++:
+Le microcontrôleur ESP8266 est programmé en langage C++ pour lire les données de la sonde WPSE335 et les envoyer au serveur Flask.
 
 ### Sonde WPSE335:
 La sonde WPSE335 est utilisée pour mesurer la température, l'humidité et la pression atmosphérique.
