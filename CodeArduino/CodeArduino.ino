@@ -14,9 +14,8 @@
 #define SCREEN_WIDTH 128
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-
 Adafruit_BME280 bme;
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 JsonDocument jsonData;
 WiFiClient client;
 WiFiUDP ntpUDP;
@@ -49,7 +48,7 @@ void ConfigureDisplay() {
 }
 
 test(CalculateAverage) {
-  int average = CalculateAverage(10);
+  float average = CalculateAverage(10);
   assertEqual(average, 2);
 }
 
